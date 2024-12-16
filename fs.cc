@@ -395,7 +395,7 @@ void writeDirToDisk(const vector<Root>& roots, const string& filename, int lineT
     string line;
 
     // read all the file content to lines
-    while (getline(inputFile, line)) {
+    while (std::getline(inputFile, line)) {
         lines.push_back(line);
     }
     inputFile.close();
@@ -663,6 +663,7 @@ int open_file(const string &filename, int flag)
     vector<string> nameAndSuffix = splitSuffix(tokens[k]);
 
     int index = 0;
+    bool flag2 = false; // judge a file is existed
     for (int i = 0; i < FS_FILE_MAX_COUNT; i++) {
         if (nameAndSuffix[0] == root[i].name) {
             if (root[i].attribute == 8) {
@@ -671,10 +672,14 @@ int open_file(const string &filename, int flag)
                 return -1;
             }else {
                 index = i;
+                flag2 = true;
                 break;
             }
         }
     }
+    if (!flag)
+        cerr << "The file is no exist!" << endl;
+        return -1;
 
     for (int i = 0; i < FS_OPEN_MAX_COUNT; i++) {
         if (fd.file[i].name[0] == '\0') {
@@ -746,8 +751,11 @@ int read_file(const string &filename, int read_length)
             break;
         }
     }
+    int m = 0;
     if(!flag1)
-        open_file(filename, 0);
+        m = open_file(filename, 0);
+    if (m == -1)
+        return -1;
 
     string line; // store the line we read currently
     int current_line = 0; // the current line number
@@ -869,8 +877,13 @@ int write_file(const string &filename, const string buffer, int write_length)
             break;
         }
     }
+    int m = 0;
     if(!flag1)
-        open_file(filename, 1);
+        m = open_file(filename, 1);
+    if (m == -1) {
+        cout << "The file is no existed" << endl;
+        return -1;
+    }
 
     int dir_index = 0;
     for (int i = 0; i < FS_FILE_MAX_COUNT; i++) {
@@ -1099,7 +1112,7 @@ int typefile(const string &filename)
     int dir_index = 0;
     flag1 = false;
     for (int i = 0; i < FS_FILE_MAX_COUNT; i++) {
-        if (nameAndSuffix[0] == root[i].name) {
+        if (nameAndSuffix[0] == root[i].name && root[i].attribute != 8) {
             dir_index = i;
             flag1 = true;
             break;
@@ -1325,14 +1338,15 @@ int dir(const string &pathdir)
                 if (root[j].name[0] != '$') {
                     cout << root[j].name << "      "
                     << root[j].type << "      "
-                    << static_cast<int>(root[j].indexFirstBlock) << "             "
-                    << static_cast<int>(root[j].attribute) << "               "
+                    << static_cast<int>(root[j].attribute) << "             "
+                    << static_cast<int>(root[j].indexFirstBlock) << "               "
                     << static_cast<int>(root[j].size)
                     << endl;
                 }
 
             }
             cout << "print success" << endl;
+            return 0;
         }
     }
 

@@ -14,7 +14,7 @@ void show_help() {
     cout << "  ls                              - list current file and directory" << endl;
     cout << "  touch <filename>                - create a file" << endl;
     cout << "  cat <filename>                  - show the file content" << endl;
-    cout << "  read <filename> <length>      - read the file content" << endl;
+    cout << "  read <filename> <filename>      - read the file content" << endl;
     cout << "  echo <filename> <text> <length> - write the content to file (cover)" << endl;
     cout << "  rm <filename>                   - delete a file" << endl;
     cout << "  open <filename>                 - open the file" << endl;
@@ -44,9 +44,9 @@ void execute_command(const string& input) {
     } else if (command == "touch") {
         string filename;
         iss >> filename;
-        int attribute = 0;
+        int attribute;
         iss >> attribute;
-        if (!filename.empty() && attribute > 0) {
+        if (!filename.empty()) {
             create_file(filename, attribute);
         } else {
             cerr << "Use: touch <filename> <attribute>" << endl;
